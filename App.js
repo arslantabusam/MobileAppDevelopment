@@ -5,7 +5,7 @@ class Login extends App {
   render(){
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Text>This is my app!</Text>
       <StatusBar style="auto" />
     </View>
   );
