@@ -2,11 +2,14 @@ import React, { Component } from "react";
 import { View, TextInput, Button, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import AwesomeAlert from 'react-native-awesome-alerts';
 
-export default class LoginScreen1 extends Component {
+
+export default class Sign_up extends Component {
     constructor(props){
         super(props);
 
         this.state = {
+            first_name: '',
+            last_name: '',
             email: '',
             password: '',
             error: '',
@@ -14,16 +17,16 @@ export default class LoginScreen1 extends Component {
             showAlert: false
         }
 
-        this.handleLogin = this.handleLogin.bind(this)
+        this.handleSignUp = this.handleSignUp.bind(this)
         //this.hideAlert = this.hideAlert.bind(this);
     }
 
-    handleLogin(){
+    handleSignUp(){
         this.setState({submitted: true})
         this.setState({error: ''})
         
-        if(!(this.state.email && this.state.password)){
-            this.setState({error: "Must enter email and password"})
+        if(!(this.state.first_name && this.state.last_name && this.state.email && this.state.password)){
+            this.setState({error: "Must fill in all the fields"})
             return;
         }
 
@@ -57,9 +60,41 @@ export default class LoginScreen1 extends Component {
            <View style={styles.container}> 
                 <View style={styles.logoContainer}>  
                     <Image source = {require('../img/logo.png')} style={styles.logo}/>
-                    
                 </View>
 
+            {/* First name input field */}
+            <View style={styles.formContainer}> 
+                    <View style={styles.first_name}> 
+                     <TextInput  
+                        placeholder="First Name"
+                        onChangeText={first_name => this.setState({first_name})}
+                        defaultValue={this.state.first_name}
+                        style={styles.input}
+                        />
+
+                        <>
+                            {this.state.submitted && !this.state.first_name && 
+                            <Text style={styles.error}> First Name field can't be empty. </Text>} 
+                        </>
+                    </View>
+                </View>
+
+                {/* Last name input field */}
+                <View style={styles.formContainer}> 
+                    <View style={styles.last_name}> 
+                     <TextInput  
+                        placeholder="Last Name"
+                        onChangeText={last_name => this.setState({last_name})}
+                        defaultValue={this.state.last_name}
+                        style={styles.input}
+                        />
+
+                        <>
+                            {this.state.submitted && !this.state.last_name && 
+                            <Text style={styles.error}> Last Name field can't be empty. </Text>} 
+                        </>
+                    </View>
+                </View>
 
                 {/* email input field */}
                 <View style={styles.formContainer}> 
@@ -100,10 +135,10 @@ export default class LoginScreen1 extends Component {
                 </View>
 
                 {/* confirm button */}
-                <View style={styles.loginButton}> 
-                    <TouchableOpacity onPress={this.handleLogin}>
-                        <View>
-                                <Text style={styles.buttonText}> Login </Text>
+                <View style={styles.Sign_UpButton}> 
+                    <TouchableOpacity onPress={this.handleSignUp}>
+                        <View style={styles.button}>
+                                <Text style={styles.buttonText}> Sign_Up </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -116,7 +151,7 @@ export default class LoginScreen1 extends Component {
                 </>
 
                 <View style={styles.registerMsg}> 
-                    <Text onPress={() => navigation.navigate('Sign up')}> Not registered yet? Make a new account! </Text>
+                    <Text onPress={() => navigation.navigate('Login')}> Already have an account? Login! </Text>
                 </View>
 
                 {/* Alert */}
@@ -169,16 +204,13 @@ const styles = StyleSheet.create({
     height: 50, 
    // marginBottom: 150,
   },
-  loginButton: {
+  Sign_UpButton: {
     backgroundColor: '#883D1A',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
     marginBottom: 10,
     marginTop: "10%",
-  },
-  button: {
-    marginTop: "30%"
   },
   buttonText: {
     color: '#fff',
