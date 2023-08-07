@@ -21,22 +21,25 @@ export default class Sign_up extends Component {
         //this.hideAlert = this.hideAlert.bind(this);
     }
 
-    handleSignUp(){
+    async handleSignUp(){
         this.setState({submitted: true})
         this.setState({error: ''})
+        
+        const { first_name, last_name, email, password } = this.state;
         
         if(!(this.state.first_name && this.state.last_name && this.state.email && this.state.password)){
             this.setState({error: "Must fill in all the fields"})
             return;
         }
 
-        const email_regex = new RegExp("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/")
+        const email_regex = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")
         if(!email_regex.test(this.state.email)){
             this.setState({error: "Email not valid."})
             return;
         }
 
-        const pass_regex = new RegExp("/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<>,.?/~_+-=|\]).{6,20}$")
+        const pass_regex = new RegExp("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{6,20}$");
+        
         if(!pass_regex.test(this.state.password)){
             this.setState({error: "Passowrd should contain 1 upper case, 1 lower case, 1 digit and 1 special character, and min length of 6 and max 20."})
             return;
@@ -44,6 +47,41 @@ export default class Sign_up extends Component {
 
         console.log("Button clicked" + this.state.email + " " + this.state.password)
         console.log("Validated and ready to send to the Api")
+
+        try {
+            const response = await fetch('http://localhost:3333/api/1.0.0/user', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ first_name, last_name, email, password }),
+            });
+      
+            const data = await response.json();
+            console.log('API response:', data);
+      
+            if (response.ok) {
+              // The login was successful, store the user ID and session token in session storage
+              sessionStorage.setItem('user_id', data.user_id);
+      
+              console.log('Created account successful!');
+      
+              navigation.navigate('Login');
+            } else if (response.status === 400) {
+              // Handle invalid credentials error
+              this.setState({ error: 'Invalid email or password' });
+            } else if (response.status === 500) {
+              // Handle server error
+              this.setState({ error: 'Server error occurred. Please try again later.' });
+            } else {
+              // Handle other unknown errors
+              this.setState({ error: 'An error occurred during login' });
+            }
+          } catch (error) {
+            console.error('Error occurred during login:', error);
+            this.setState({ error: 'An error occurred during login' });
+          }
+        
 
        //  this.setState({ showAlert: true });
     }
