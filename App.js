@@ -24,7 +24,7 @@ export default class App extends Component {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen1} />
-          <Stack.Screen name="Sign_up" component={Sign_up} />
+          <Stack.Screen name="Sign up" component={Sign_up} />
           <Stack.Screen name="AppNav" component={AppNav} />
         </Stack.Navigator>
       </NavigationContainer>

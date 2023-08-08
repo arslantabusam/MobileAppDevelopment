@@ -105,7 +105,7 @@ export default class Sign_up extends Component {
                     <View style={styles.first_name}> 
                      <TextInput  
                         placeholder="First Name"
-                        onChangeText={first_name => this.setState({first_name})}
+                        onChangeText={(first_name) => this.setState({first_name})}
                         defaultValue={this.state.first_name}
                         style={styles.input}
                         />
@@ -122,7 +122,7 @@ export default class Sign_up extends Component {
                     <View style={styles.last_name}> 
                      <TextInput  
                         placeholder="Last Name"
-                        onChangeText={last_name => this.setState({last_name})}
+                        onChangeText={(last_name) => this.setState({last_name})}
                         defaultValue={this.state.last_name}
                         style={styles.input}
                         />
@@ -139,7 +139,7 @@ export default class Sign_up extends Component {
                     <View style={styles.email}> 
                      <TextInput  
                         placeholder="Email"
-                        onChangeText={email => this.setState({email})}
+                        onChangeText={(email) => this.setState({email})}
                         defaultValue={this.state.email}
                         style={styles.input}
                         keyboardType="email-address"
@@ -158,7 +158,7 @@ export default class Sign_up extends Component {
                     <View style={styles.email}> 
                      <TextInput  
                         placeholder="Password"
-                        onChangeText={password => this.setState({password})}
+                        onChangeText={(password) => this.setState({password})}
                         defaultValue={this.state.password}
                         style={styles.input}
                         secureTextEntry

@@ -190,7 +190,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  StyleSheet,
+  StyleSheet, ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -203,9 +203,31 @@ export default class LoginScreen1 extends Component {
       password: "",
       error: "",
       submitted: false,
+      isLoading: true,
     };
 
     this.handleLogin = this.handleLogin.bind(this);
+  }
+
+  componentDidMount(){
+    this.unsubcribe = this.props.navigation.addListener('focus', () => {
+      this.checkLoggedIn();
+    });
+  }
+
+  componentWillUnmount(){
+    this.unsubcribe();
+  }
+
+  checkLoggedIn = async () => {
+    const value = await AsyncStorage.getItem('session_token');
+    if(value != null) {
+      this.props.navigation.navigate('AppNav');
+    }else{
+      this.setState({
+        isLoading: false,
+    });  
+    }
   }
 
   async handleLogin() {
@@ -232,11 +254,13 @@ export default class LoginScreen1 extends Component {
 
       const data = await response.json();
       console.log("API response:", data);
+      console.log(data.id);
 
       if (response.ok) {
         // The login was successful, store the user ID and session token in session storage
-        await AsyncStorage.setItem("user_id", data.user_id);
-        await AsyncStorage.setItem("session_token", data.session_token);
+        await AsyncStorage.setItem("user_id", data.id);
+        await AsyncStorage.setItem("session_token", data.token);
+        
         console.log("Login successful!");
         this.props.navigation.navigate("AppNav");
         // navigation.navigate("AppNav");
@@ -261,6 +285,14 @@ export default class LoginScreen1 extends Component {
   render() {
     const navigation = this.props.navigation;
     //const { showAlert } = this.state; // Destructure the showAlert state
+
+    if(this.state.isLoading){
+      return(
+          <View style={styles.activityIndicator}>
+              <ActivityIndicator size="large" color="#00ff00" />
+          </View>
+      );
+  }else{
     return (
       <View style={styles.container}>
         <View style={styles.logoContainer}>
@@ -324,7 +356,7 @@ export default class LoginScreen1 extends Component {
         </>
 
         <View style={styles.registerMsg}>
-          <Text onPress={() => navigation.navigate("Sign_up")}>
+          <Text onPress={() => navigation.navigate("Sign up")}>
             {" "}
             Not registered yet? Make a new account!{" "}
           </Text>
@@ -347,7 +379,7 @@ export default class LoginScreen1 extends Component {
                     />
                 </View> */}
       </View>
-    );
+    );}
   }
 }
 
@@ -403,5 +435,10 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 20,
     marginTop: 30,
+  },
+  activityIndicator: {
+    flex: 1, 
+    justifyContent: "center", 
+    alignItems: "center",
   },
 });
