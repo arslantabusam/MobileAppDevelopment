@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, TextInput, Button, StyleSheet, Text, Image, TouchableOpacity, ActivityIndicator, FlatList} from "react-native";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage from the correct package
+import Select_Users from "./Select_Users";
 
 export default class Contacts extends Component {
     constructor(props){
@@ -16,6 +17,8 @@ export default class Contacts extends Component {
         }
     }
 
+
+    //ADD CONTACT
     handleAddContact = async (contact_id) => {
         this.setState({submitted: true})
         this.setState({error: ''})
@@ -66,6 +69,7 @@ export default class Contacts extends Component {
             }
       }
 
+
     async componentDidMount() {
         try {
           const user_id = await AsyncStorage.getItem("user_id");
@@ -89,7 +93,7 @@ export default class Contacts extends Component {
           console.log("API response status:", response.status);
           const data = await response.json();
           console.log("API response data:", data);
-        
+            console.log(data)
           this.setState({ isLoading: false, contactsData: data });
           //error handling get request
           if (response.status === 200) {
@@ -114,278 +118,79 @@ export default class Contacts extends Component {
         const {isLoading, contactsData} = this.state;
 
         if(!isLoading){
-            return (
-                <View style={styles.container}>
-                  <View style={styles.addContact}>
-                    <TextInput onChangeText={(contact_id) => this.setState({ contact_id })} />
-                    <TouchableOpacity onPress={() => this.handleAddContact(this.state.contact_id)}>
-                      <View>
-                        <Text style={styles.buttonText}> Add contact </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.addContact}>
-                    <TextInput
-                      onChangeText={(first_name) => this.setState({ first_name })}
-                      placeholder="First Name"
-                      style={styles.input}
-                    />
-                    <TextInput
-                      onChangeText={(last_name) => this.setState({ last_name })}
-                      placeholder="Last Name"
-                      style={styles.input}
-                    />
-                    <TextInput
-                      onChangeText={(email) => this.setState({ email })}
-                      placeholder="Email"
-                      style={styles.input}
-                    />
-                    <TouchableOpacity onPress={() => this.handleAddContact()}>
-                      <View style={styles.addButton}>
-                        <Text style={styles.buttonText}>Add Contact</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  {this.state.isLoading ? (
-                    <Text>Loading...</Text>
-                  ) : (
-                    <View>
-                      <FlatList
-                        data={this.state.contactsData}
-                        renderItem={({ item }) => (
-                          <View>
-                            <Text>{item.first_name}</Text>
-                            <Text>{item.last_name}</Text>
-                            <Text>{item.email}</Text>
-                            <Button title="Delete" onPress={() => console.log("delete")} />
-                          </View>
-                        )}
-                        keyExtractor={({ id }, index) => id}
-                      />
+            if(contactsData.keys.length !== 0){
+                console.log("ok");
+                return (
+                    <View style={styles.container}>
+
+                        {/* BUTTON */}
+                        <View style={styles.addContactBtn}>
+                            {/* <TextInput onChangeText={(contact_id) => this.setState({ contact_id })} /> */}
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate("Select_Users")}>
+                                <View>
+                                    <Text style={styles.buttonText}> Add new contact </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+
+
+                        {/* CONTACT DETAILS */}
+                         <View style={styles.details}>
+                            <FlatList data={this.state.contactsData} renderItem={({item}) => 
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('SingleChat')}>
+                                <View style={styles.userItem}>
+                                <View style={styles.highlightedId}>
+                                    <Text>{item.user_id}</Text>
+                                </View>
+                                <View style={styles.userInfo}>
+                                    <Text style={styles.userName}>{item.given_name} {item.family_name}</Text>
+                                    <Text style={styles.userEmail}>{item.email}</Text>
+                                </View>
+                                </View>
+                                </TouchableOpacity>
+                            }  
+                            keyExtractor={item=>item.user_id}
+                            contentContainerStyle={styles.flatListContent}
+                            /> 
+                        </View>
+
                     </View>
-                  )}
+                  );
+            } else{
+                return(
+                <View style={styles.container}>
+                    {/* BUTTON */}
+                    <View style={styles.addContactBtn}>
+                            {/* <TextInput onChangeText={(contact_id) => this.setState({ contact_id })} /> */}
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate("AllUsers")}>
+                                <View>
+                                    <Text style={styles.buttonText}> Add new contact </Text>
+                                </View>
+                            </TouchableOpacity>
+                     </View>
+                     <View style={styles.msg}>
+                        <Text >No Contact</Text>
+                     </View>
+                    
                 </View>
-              );
+                    
+                    );
+            }
+        } else{
+            <View>
+                <Text>Loading...</Text>
+            </View>
         }
     }
-        // return (
-        //     <View style={styles.container}>
-        //       <View style={styles.addContact}>
-        //         <TextInput onChangeText={(contact_id) => this.setState({ contact_id })} />
-        //         <TouchableOpacity onPress={() => this.handleAddContact(this.state.contact_id)}>
-        //           <View>
-        //             <Text style={styles.buttonText}> Add contact </Text>
-        //           </View>
-        //         </TouchableOpacity>
-        //       </View>
-        //       <View style={styles.addContact}>
-        //         <TextInput
-        //           onChangeText={(first_name) => this.setState({ first_name })}
-        //           placeholder="First Name"
-        //           style={styles.input}
-        //         />
-        //         <TextInput
-        //           onChangeText={(last_name) => this.setState({ last_name })}
-        //           placeholder="Last Name"
-        //           style={styles.input}
-        //         />
-        //         <TextInput
-        //           onChangeText={(email) => this.setState({ email })}
-        //           placeholder="Email"
-        //           style={styles.input}
-        //         />
-        //         <TouchableOpacity onPress={() => this.handleAddContact()}>
-        //           <View style={styles.addButton}>
-        //             <Text style={styles.buttonText}>Add Contact</Text>
-        //           </View>
-        //         </TouchableOpacity>
-        //       </View>
-        //       {this.state.isLoading ? (
-        //         <Text>Loading...</Text>
-        //       ) : (
-        //         <View>
-        //           <FlatList
-        //             data={this.state.contactsData}
-        //             renderItem={({ item }) => (
-        //               <View>
-        //                 <Text>{item.first_name}</Text>
-        //                 <Text>{item.last_name}</Text>
-        //                 <Text>{item.email}</Text>
-        //                 <Button title="Delete" onPress={() => console.log("delete")} />
-        //               </View>
-        //             )}
-        //             keyExtractor={({ id }, index) => id}
-        //           />
-        //         </View>
-        //       )}
-        //     </View>
-        //   );
-                        
-        //  if(isLoading){
-//              return (
-//                 <View style={styles.container}>
-//                     <View style={styles.addContact}>
-//                         <TextInput onChangeText={(contact_id) => this.setState({ contact_id })} />
-//                         <TouchableOpacity onPress={() => this.handleAddContact(this.state.contact_id)}>
-//                             <View>
-//                             <Text style={styles.buttonText}> Add contact </Text>
-//                         </View>
-//                         </TouchableOpacity>
-//                     </View>
-//                     <View style={styles.container}>
-//   <View style={styles.addContact}>
-//     <TextInput
-//       onChangeText={(first_name) => this.setState({ first_name })}
-//       placeholder="First Name"
-//       style={styles.input}
-//     />
-//     <TextInput
-//       onChangeText={(last_name) => this.setState({ last_name })}
-//       placeholder="Last Name"
-//       style={styles.input}
-//     />
-//     <TextInput
-//       onChangeText={(email) => this.setState({ email })}
-//       placeholder="Email"
-//       style={styles.input}
-//     />
-//     <TouchableOpacity onPress={() => this.handleAddContact()}>
-//       <View style={styles.addButton}>
-//         <Text style={styles.buttonText}>Add Contact</Text>
-//       </View>
-//     </TouchableOpacity>
-//   </View>
-//   </View>
-//                   <Text>Loading...</Text>
-//                 </View>
-
-//         //       );
-//         // }else{
-//         //     return(
-//                 <View>
-//                     <View style={styles.addContact}>
-//                         <TextInput onChangeText={(contact_id) => this.setState({ contact_id })}></TextInput>
-//                         <TouchableOpacity onPress={() => this.handleAddContact(this.state.contact_id)}>
-//                         <View>
-//                         <Text style={styles.buttonText}> Add contact </Text>
-//                         </View>
-//                     </TouchableOpacity>
-//                     </View>
-//                     <FlatList data={this.state.contactsData} 
-//                         renderItem={({item}) => (
-//                         <View>
-//                             <Text>{item.first_name}</Text>
-//                             <Text>{item.last_name}</Text>
-//                             <Text>{item.email}</Text>
-//                             <Button title="Delete" onPress={() => console.log("delete")}
-//                             />
-//                         </View>
-//                     )}
-//                     keyExtractor={({id}, index) => id}
-//                     />
-//                 </View>
-//              )
-//         }
-    
-//     }
 }
 
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      //backgroundColor: "red",
+    //   justifyContent: "center",
+    //   alignItems: "center",
+    //   backgroundColor: "red",
       paddingHorizontal: 20,
-    },
-    profilePhoto: {
-      flex:1,
-    },
-    ItemsContainer: {
-      flex: 3,
-      width: "100%",
-      height: "100%",
-    },
-    profilePhotoBtn: {
-      marginTop: 20,
-      width: 150, // Adjust as needed for medium size
-      height: 150, // Adjust as needed for medium size
-      borderRadius: 75, // Makes it round
-      // backgroundColor: 'blue', // Set a background color
-      borderColor: "#883D1A",
-      alignSelf: "center",
-    },
-    detailsContainer: {
-      width: "100%",
-      justifyContent: "center",
-      alignItems: "center",
-      borderWidth: 1,
-      borderColor: "#883D1A",
-      borderRadius: 5,
-      padding: 10,
-      marginBottom: 20,
-    },
-    updateContainer: {
-      flexDirection: 'row',
-      alignSelf: "stretch",
-      //backgroundColor: "pink",
-    },
-    updateButton: {
-      alignItems: "center",
-      width: "50%",
-      flex: 1,
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 5,
-      marginBottom: 10,
-      marginTop: "10%",
-      backgroundColor: "#528E7A",
-    },
-    updateBack: {
-      width: "50%",
-      alignItems: "center",
-      flex: 1,
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 5,
-      marginBottom: 10,
-      marginTop: "10%",
-      backgroundColor: "grey"
-    },
-    logoutButton: {
-      backgroundColor: "#D97F6D",
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 5,
-      marginBottom: 10,
-      marginTop: "10%",
-      justifyContent: "flex-start",
-    },
-    detailBox: {
-      flexDirection: "row",
-      alignSelf: "stretch",
-      justifyContent: "space-between",
-      paddingHorizontal: 10,
-      marginBottom: 10,
-      marginBottom: "10%",
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: "bold",
-      padding: 5,
-    },
-    textContainer: {
-      borderWidth: 1,
-      borderColor: "#883D1A",
-      borderRadius: 5,
-      padding: 5,
-      width: "60%",
-    },
-    buttonText: {
-      color: "#fff",
-      fontSize: 16,
-      fontWeight: "bold",
-      textAlign: "center",
     },
     text: {
       fontSize: 16,
@@ -395,12 +200,22 @@ const styles = StyleSheet.create({
       justifyContent: "center", 
       alignItems: "center",
     },
-    profilePhotoImage: {
-      width: 150,
-      height: 150,
-      borderRadius: 75,
-      borderColor: '#883D1A',
-      borderWidth: 1,
+    addContactBtn: {
+        backgroundColor: "#528E7A",
+        justifyContent: "center",
+        alignContent: "center",
+         textAlign: "center",
+         height: 50,
+         fontWeight: "bold",
+         paddingVertical: 0,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 10,
+    },
+    msg: {
+        flex: 1,
+        alignItems:"center",
+        justifyContent:"center",
     }
   });
   

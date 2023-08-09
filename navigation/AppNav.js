@@ -17,6 +17,7 @@ import SingleChat from "../screens/Single_chat";
 // I need stack navigators for a single chat as well, to update chat info
 // add or remove a contact.
 import NewChat from "../screens/New_Chat";
+import AllUsers from "../screens/Search_Users";
 
 import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -36,6 +37,7 @@ const ChatsStackScreen = () => (
     <ChatsStack.Screen name="ChatsHome" component={Chats} />
     <ChatsStack.Screen name="SingleChat" component={SingleChat} />
     <ChatsStack.Screen name="NewChat" component={NewChat} />
+    <ChatsStack.Screen name="AllUsers" component={AllUsers} />
   </ChatsStack.Navigator>
 );
 
